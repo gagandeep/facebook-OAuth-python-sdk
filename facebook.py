@@ -355,6 +355,9 @@ def get_user_from_cookie(cookies, app_id, app_secret):
     """
     cookie = cookies.get("fbsr_" + app_id, "")
     if not cookie: return None
+    if type(cookie)!=str:
+        cookie = cookie.value
+		
     parsed_request = parse_signed_request(cookie, app_secret)
     args = {
         "client_id": app_id,
@@ -364,7 +367,7 @@ def get_user_from_cookie(cookies, app_id, app_secret):
     }
     # We would use GraphAPI.request() here, except for that the fact that the
     # response is a key-value pair, and not JSON.
-    response = urllib.urlopen("https://graph.facebook.com/oauth/access_token" +
+    response = urllib2.urlopen("https://graph.facebook.com/oauth/access_token" +
                               "?" + urllib.urlencode(args))
     query_str = parse_qs(response.read())
     if "access_token" in query_str:
